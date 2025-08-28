@@ -2,9 +2,9 @@ extends Node2D
 
 var Gem = preload("res://gem.tscn")
 
-var width: int = 5 # columns
-var height: int = 5 # rows
-var gem_size: int = 192 # pixels
+var width: int = 8 # columns
+var height: int = 8 # rows
+var gem_size: int = 144 # pixels
 var gems: Array = []
 
 func _init() -> void:
