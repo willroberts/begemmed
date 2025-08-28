@@ -1,7 +1,7 @@
 extends Node2D
 
 var color: String
-var colors: Array = ['blue', 'green', 'grey', 'purple', 'red', 'yellow']
+var colors: Array = ['blue', 'green', 'purple', 'red', 'yellow']
 
 func _init() -> void:
 	color = colors[randi() % colors.size()]

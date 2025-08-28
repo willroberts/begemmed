@@ -4,7 +4,7 @@ func _init() -> void:
 	pass
 
 func _ready() -> void:
-	pass
+	RenderingServer.set_default_clear_color(Color.STEEL_BLUE)
 
 func _input(event: InputEvent) -> void:
 	pass
