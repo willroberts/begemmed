@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqq3stcq0i1p6"
-path="res://.godot/imported/element_yellow_diamond_glossy.png-110c41b8a77e75a89bf4afba6ddfddf5.ctex"
+path="res://.godot/imported/element_yellow_diamond_glossy.png-e63a055b5a9c899fb15e200e3bbb56f2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/png/element_yellow_diamond_glossy.png"
-dest_files=["res://.godot/imported/element_yellow_diamond_glossy.png-110c41b8a77e75a89bf4afba6ddfddf5.ctex"]
+source_file="res://assets/png/diamonds/element_yellow_diamond_glossy.png"
+dest_files=["res://.godot/imported/element_yellow_diamond_glossy.png-e63a055b5a9c899fb15e200e3bbb56f2.ctex"]
 
 [params]
 

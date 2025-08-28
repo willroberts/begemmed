@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp433so7mpbh"
-path="res://.godot/imported/selectorB.png-5d69feee8f474cef976209327825a78d.ctex"
+path="res://.godot/imported/selectorB.png-25111f3dd7f21957cab18abf5ac39cc8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/png/selectorB.png"
-dest_files=["res://.godot/imported/selectorB.png-5d69feee8f474cef976209327825a78d.ctex"]
+source_file="res://assets/png/selectors/selectorB.png"
+dest_files=["res://.godot/imported/selectorB.png-25111f3dd7f21957cab18abf5ac39cc8.ctex"]
 
 [params]
 
