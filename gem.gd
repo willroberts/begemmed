@@ -21,3 +21,6 @@ func set_color(c: String) -> void:
 		c = 'blue'
 	color = c
 	$Sprite2D.set_texture(colors[c])
+
+func set_label(value: int) -> void:
+	$Label.text = str(value)
