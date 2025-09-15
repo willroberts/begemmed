@@ -31,7 +31,7 @@ func generate_grid() -> void:
 		for x in range(0, grid_size):
 			var g = Gem.instantiate()
 			g.position = Vector2(x*gem_size, y*gem_size)
-			g.set_label(coords_to_id(Vector2(x, y), grid_size))
+			g.set_label(coords_to_id(Vector2(x, y)))
 			gems.append(g)
 
 	# Replace duplicates.
@@ -73,10 +73,10 @@ func next_vertical_node_matches(id: int) -> bool:
 	if gems[id].get_color() != gems[id+grid_size].get_color(): return false
 	return true
 
-static func id_to_coords(id: int, grid_size: int) -> Vector2:
+func id_to_coords(id: int) -> Vector2:
 	var x = id % grid_size
 	var y = (id - x) / grid_size
 	return Vector2(x, y)
 
-static func coords_to_id(coords: Vector2, grid_size: int) -> int:
+func coords_to_id(coords: Vector2) -> int:
 	return coords.y * grid_size + coords.x
