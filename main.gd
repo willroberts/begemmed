@@ -6,6 +6,15 @@ extends Node
 var score := 0
 var selected_cell := Vector2i(-1, -1)
 
+'''
+TODO:
+1. Only allow moves if they would result in a match.
+2. Detect matches after a valid move.
+3. Delete the matches and make gems "fall" into place.
+4. Add the number of deleted gems to the score.
+5. Display the score on the screen.
+'''
+
 func _init() -> void:
 	pass
 
