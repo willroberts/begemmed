@@ -42,16 +42,14 @@ func find_horizontal_matches() -> Array:
 		for x in range(0, GRID_SIZE):
 			if gems[y][x].get_color() == gems[y][x-1].get_color():
 				count += 1
-			else:
-				if count >= 3:
-					for k in range(x - count, x):
-						if k < 0: continue
-						matches.append(Vector2i(k, y))
-				count = 1
+				continue
+			if count >= 3:
+				for k in range(x - count, x):
+					if k >= 0: matches.append(Vector2i(k, y))
+			count = 1
 		if count >= 3:
 			for k in range(GRID_SIZE - count, GRID_SIZE):
-				if k < 0: continue
-				matches.append(Vector2i(k, y))
+				if k >= 0: matches.append(Vector2i(k, y))
 	return matches
 
 func find_vertical_matches() -> Array:
@@ -61,16 +59,14 @@ func find_vertical_matches() -> Array:
 		for y in range(1, GRID_SIZE):
 			if gems[y][x].get_color() == gems[y - 1][x].get_color():
 				count += 1
-			else:
-				if count >= 3:
-					for k in range(y - count, y):
-						if k < 0: continue
-						matches.append(Vector2i(x, k))
-				count = 1
+				continue
+			if count >= 3:
+				for k in range(y - count, y):
+					if k >= 0: matches.append(Vector2i(x, k))
+			count = 1
 		if count >= 3:
 			for k in range(GRID_SIZE - count, GRID_SIZE):
-				if k < 0: continue
-				matches.append(Vector2i(x, k))
+				if k >= 0: matches.append(Vector2i(x, k))
 	return matches
 
 func swap_gems(first: Vector2i, second: Vector2i) -> void:
