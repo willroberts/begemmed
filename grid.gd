@@ -2,9 +2,9 @@ extends Node2D
 
 var Gem = preload("res://gem.tscn")
 
-var grid_size: int = 8
-var gem_size: int = 144 # pixels
-var gems: Array = []
+var GRID_SIZE: int = 8
+var GEM_SIZE: int = 144 # pixels
+var gems: Array = [] # [][]Gem
 
 func _init() -> void:
 	''' Initializes the grid by filling rows and columns with gems.
@@ -14,69 +14,69 @@ func _init() -> void:
 	generate_grid()
 
 func _ready() -> void:
-	for m in find_horizontal_matches():
-		print('HM: ', m)
-	for m in find_vertical_matches():
-		print('VM: ', m)
-
-func _input(event: InputEvent) -> void:
-	pass
-	
-func _process(delta: float) -> void:
-	pass
+	while true:
+		var matches = find_horizontal_matches() + find_vertical_matches()
+		if len(matches) == 0:
+			print('no more matches found')
+			break
+		print('matches found; replacing')
+		replace_matches(matches)
 
 func generate_grid() -> void:
-	# Generate initial contents.
-	for y in range(0, grid_size):
-		for x in range(0, grid_size):
+	for y in range(0, GRID_SIZE):
+		var row = []
+		for x in range(0, GRID_SIZE):
 			var g = Gem.instantiate()
-			g.position = Vector2(x*gem_size, y*gem_size)
-			g.set_label(coords_to_id(Vector2(x, y)))
-			gems.append(g)
-
-	# Replace duplicates.
-	#TBD
-
-	# Render gems.
-	for g in gems:
-		add_child(g)
+			g.position = Vector2(x*GEM_SIZE, y*GEM_SIZE)
+			add_child(g)
+			row.append(g)
+		gems.append(row)
 
 func find_horizontal_matches() -> Array:
 	var matches = []
-	for i in range(0, len(gems)-1):
-		var matched = [i]
-		for j in range(i, len(gems)-1):
-			if not next_horizontal_node_matches(j):
-				break
-			matched.append(j+1)
-		if len(matched) > 2: matches.append(matched)
+	for y in range(0, GRID_SIZE):
+		var count := 1
+		for x in range(0, GRID_SIZE):
+			if gems[y][x].get_color() == gems[y][x-1].get_color():
+				count += 1
+			else:
+				if count >= 3:
+					for k in range(x - count, x):
+						if k < 0: continue
+						matches.append(Vector2i(k, y))
+				count = 1
+		if count >= 3:
+			for k in range(GRID_SIZE - count, GRID_SIZE):
+				if k < 0: continue
+				matches.append(Vector2i(k, y))
 	return matches
 
 func find_vertical_matches() -> Array:
 	var matches = []
-	for i in range(0, len(gems)-1):
-		var matched = [i]
-		for j in range(i, len(gems)-1, grid_size):
-			if not next_vertical_node_matches(j):
-				break
-			matched.append(j+grid_size)
-		if len(matched) > 2: matches.append(matched)
+
+	for x in range(GRID_SIZE):
+		var count := 1
+		for y in range(1, GRID_SIZE):
+			if gems[y][x].get_color() == gems[y - 1][x].get_color():
+				count += 1
+			else:
+				if count >= 3:
+					for k in range(y - count, y):
+						if k < 0: continue
+						matches.append(Vector2i(x, k))
+				count = 1
+		if count >= 3:
+			for k in range(GRID_SIZE - count, GRID_SIZE):
+				if k < 0: continue
+				matches.append(Vector2i(x, k))
+
 	return matches
 
-func next_horizontal_node_matches(id: int) -> bool:
-	if id % grid_size == 7: return false
-	if gems[id].get_color() != gems[id+1].get_color(): return false
-	return true
-
-func next_vertical_node_matches(id: int) -> bool:
-	if id > len(gems) - 1 - grid_size: return false
-	if gems[id].get_color() != gems[id+grid_size].get_color(): return false
-	return true
-
-func id_to_coords(id: int) -> Vector2:
-	var x = id % grid_size
-	var y = (id - x) / grid_size
-	return Vector2(x, y)
-
-func coords_to_id(coords: Vector2) -> int:
-	return coords.y * grid_size + coords.x
+func replace_matches(matches: Array) -> void:
+	for m in matches:
+		var existing = gems[m.y][m.x]
+		remove_child(existing)
+		var g = Gem.instantiate()
+		g.position = Vector2(m.x*GEM_SIZE, m.y*GEM_SIZE)
+		gems[m.y][m.x] = g
+		add_child(g)
