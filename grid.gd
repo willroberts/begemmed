@@ -11,18 +11,6 @@ func _init() -> void:
 	If matches exist in the generated grid, randomize those cells
 	until no matches exist.
 	'''
-	generate_grid()
-
-func _ready() -> void:
-	while true:
-		var matches = find_horizontal_matches() + find_vertical_matches()
-		if len(matches) == 0:
-			print('no more matches found')
-			break
-		print('matches found; replacing')
-		replace_matches(matches)
-
-func generate_grid() -> void:
 	for y in range(0, GRID_SIZE):
 		var row = []
 		for x in range(0, GRID_SIZE):
@@ -31,6 +19,21 @@ func generate_grid() -> void:
 			add_child(g)
 			row.append(g)
 		gems.append(row)
+
+func _ready() -> void:
+	while true:
+		var matches = find_horizontal_matches() + find_vertical_matches()
+		if len(matches) == 0:
+			print('no more matches found')
+			break
+		print('matches found; replacing')
+		for m in matches:
+			var existing = gems[m.y][m.x]
+			remove_child(existing)
+			var g = Gem.instantiate()
+			g.position = Vector2(m.x*GEM_SIZE, m.y*GEM_SIZE)
+			gems[m.y][m.x] = g
+			add_child(g)
 
 func find_horizontal_matches() -> Array:
 	var matches = []
@@ -53,7 +56,6 @@ func find_horizontal_matches() -> Array:
 
 func find_vertical_matches() -> Array:
 	var matches = []
-
 	for x in range(GRID_SIZE):
 		var count := 1
 		for y in range(1, GRID_SIZE):
@@ -69,17 +71,7 @@ func find_vertical_matches() -> Array:
 			for k in range(GRID_SIZE - count, GRID_SIZE):
 				if k < 0: continue
 				matches.append(Vector2i(x, k))
-
 	return matches
-
-func replace_matches(matches: Array) -> void:
-	for m in matches:
-		var existing = gems[m.y][m.x]
-		remove_child(existing)
-		var g = Gem.instantiate()
-		g.position = Vector2(m.x*GEM_SIZE, m.y*GEM_SIZE)
-		gems[m.y][m.x] = g
-		add_child(g)
 
 func swap_gems(first: Vector2i, second: Vector2i) -> void:
 	var first_color = gems[first.y][first.x].get_color()
