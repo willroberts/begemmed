@@ -80,3 +80,9 @@ func replace_matches(matches: Array) -> void:
 		g.position = Vector2(m.x*GEM_SIZE, m.y*GEM_SIZE)
 		gems[m.y][m.x] = g
 		add_child(g)
+
+func swap_gems(first: Vector2i, second: Vector2i) -> void:
+	var first_color = gems[first.y][first.x].get_color()
+	var second_color = gems[second.y][second.x].get_color()
+	gems[first.y][first.x].set_color(second_color)
+	gems[second.y][second.x].set_color(first_color)
