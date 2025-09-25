@@ -24,3 +24,8 @@ func set_color(c: String) -> void:
 
 func set_label(value: int) -> void:
 	$Label.text = str(value)
+
+func set_highlight(on: bool) -> void:
+	$Highlight.visible = false
+	if on:
+		$Highlight.visible = true
