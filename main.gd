@@ -13,6 +13,7 @@ TODO:
 3. Delete the matches and make gems "fall" into place.
 4. Add the number of deleted gems to the score.
 5. Display the score on the screen.
+6. Add animations.
 '''
 
 func _init() -> void:
@@ -57,5 +58,5 @@ func _input(event: InputEvent) -> void:
 	$Grid.gems[selected_cell.y][selected_cell.x].set_highlight(false)
 	selected_cell = Vector2i(-1, -1)
 	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
