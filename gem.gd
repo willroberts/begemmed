@@ -9,6 +9,9 @@ static var COLORS: Dictionary[String, Resource] = {
 	'yellow': preload("res://assets/png/diamonds/element_yellow_diamond_glossy.png"),
 }
 
+static func random_color() -> String:
+	return COLORS.keys()[randi() % COLORS.size()]
+
 var color: String
 
 func _ready() -> void:
@@ -23,9 +26,6 @@ func set_color(c: String) -> void:
 		c = 'blue'
 	color = c
 	$Sprite2D.set_texture(COLORS[c])
-
-static func random_color() -> String:
-	return COLORS.keys()[randi() % COLORS.size()]
 
 func set_label(value: int) -> void:
 	$Label.text = str(value)

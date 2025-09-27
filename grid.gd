@@ -22,13 +22,16 @@ func _ready() -> void:
 	''' If matches exist in the generated grid, randomize until no matches exist.
 	'''
 	while true:
-		var matches = find_horizontal_matches(gem_nodes) + find_vertical_matches(gem_nodes)
+		var matches = find_matches(gem_nodes)
 		if len(matches) == 0:
 			print('no more matches found')
 			break
 		print('matches found; replacing')
 		for m in matches:
 			gem_nodes[m.y][m.x].set_color(Gem.random_color())
+
+func find_matches(grid_contents: Array) -> Array:
+	return find_horizontal_matches(grid_contents) + find_vertical_matches(grid_contents)
 
 func find_horizontal_matches(grid_contents: Array) -> Array:
 	var matches = []
@@ -63,22 +66,17 @@ func find_vertical_matches(grid_contents: Array) -> Array:
 			for k in range(GRID_SIZE - count, GRID_SIZE):
 				if k >= 0: matches.append(Vector2i(x, k))
 	return matches
-'''
-func swap_gems(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
+
+func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
+	''' Swaps the position of two gems. Finds all resulting matches and deletes matching gems. Makes gems
+	fall to fill empty spaces, generating new gems as needed.
+	'''
 	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
-	# TODO: Check for matches here.
 
 func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: Vector2i) -> bool:
-	var colors = extract_colors(grid_contents)
-	swap_gems(colors, first, second)
-	return len(find_horizontal_matches(colors) + find_vertical_matches(colors)) > 0
-
-func extract_colors(grid_contents: Array) -> Array:
-	var colors = []
-	for y in range(0, GRID_SIZE):
-		var color_row = []
-		for x in range(0, GRID_SIZE):
-			color_row.append(grid_contents[y][x].get_color())
-		colors.append(color_row)
-	return colors
-'''
+	# FIXME: deep copy may not be working; grid reports matches when it shouldn't.
+	# Repro: Make a non-matching move. Then a matching move. Then the same non-matching move.
+	#        The non-matching move will then be reported as matching.
+	var copy = grid_contents.duplicate(true)
+	copy[first.y][first.x] = copy[second.y][second.x]
+	return len(find_matches(copy)) > 0

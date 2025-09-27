@@ -43,7 +43,7 @@ func _input(event: InputEvent) -> void:
 	# This is the first click; save the position and return.
 	if selected_cell == Vector2i(-1, -1):
 		selected_cell = clicked_cell
-		$Grid.gem_nodes[selected_cell.y][selected_cell.x].set_highlight(true)
+		#$Grid.gem_nodes[selected_cell.y][selected_cell.x].set_highlight(true)
 		return
 
 	# This is the second click; swap gem positions.
@@ -51,11 +51,11 @@ func _input(event: InputEvent) -> void:
 	if abs(clicked_cell.x - selected_cell.x) + abs(clicked_cell.y - selected_cell.y) != 1:
 		return
 	# Disallow swaps which would not result in a new match.
-	#if $Grid.swap_would_result_in_match($Grid.gems, clicked_cell, selected_cell):
-	#	print('Swap would result in match.')
-	#	$Grid.swap_gems($Grid.gems, clicked_cell, selected_cell)
-	#else:
-	#	print('Swap would not result in match.')
+	if $Grid.swap_would_result_in_match($Grid.gem_nodes, clicked_cell, selected_cell):
+		print('Swap would result in match.')
+		$Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
+	else:
+		print('Swap would not result in match.')
 	reset_selection()
 
 func reset_selection():
