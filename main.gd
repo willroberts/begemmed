@@ -16,9 +16,6 @@ TODO:
 6. Add animations.
 '''
 
-func _init() -> void:
-	pass
-
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color.STEEL_BLUE)
 
@@ -53,10 +50,14 @@ func _input(event: InputEvent) -> void:
 	# Disallow swapping non-adjacent gems.
 	if abs(clicked_cell.x - selected_cell.x) + abs(clicked_cell.y - selected_cell.y) != 1:
 		return
-	$Grid.swap_gems(clicked_cell, selected_cell)
-	# TODO: Check for matches.
+	# Disallow swaps which would not result in a new match.
+	if $Grid.swap_would_result_in_match($Grid.gems, clicked_cell, selected_cell):
+		print('Swap would result in match.')
+		#$Grid.swap_gems($Grid.gems, clicked_cell, selected_cell)
+	else:
+		print('Swap would not result in match.')
+	reset_selection()
+
+func reset_selection():
 	$Grid.gems[selected_cell.y][selected_cell.x].set_highlight(false)
 	selected_cell = Vector2i(-1, -1)
-	
-func _process(_delta: float) -> void:
-	pass
