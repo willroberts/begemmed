@@ -8,12 +8,12 @@ var selected_cell := Vector2i(-1, -1)
 
 '''
 TODO:
-0. Fix bugs in gem swapping (two clicks on same cell, clicks outside range).
 1. Only allow moves if they would result in a match.
 2. Detect matches after a valid move.
 3. Delete the matches and make gems "fall" into place.
 4. Add the number of deleted gems to the score.
 5. Display the score on the screen.
+6. Add animations.
 '''
 
 func _init() -> void:
@@ -39,9 +39,14 @@ func _input(event: InputEvent) -> void:
 	if y < 0 or y >= GRID_SIZE: return
 	var clicked_cell = Vector2i(x, y)
 
+	# Clicking an already-selected cell does nothing.
+	if clicked_cell == selected_cell:
+		return
+
 	# This is the first click; save the position and return.
 	if selected_cell == Vector2i(-1, -1):
 		selected_cell = clicked_cell
+		$Grid.gems[selected_cell.y][selected_cell.x].set_highlight(true)
 		return
 
 	# This is the second click; swap gem positions.
@@ -50,7 +55,8 @@ func _input(event: InputEvent) -> void:
 		return
 	$Grid.swap_gems(clicked_cell, selected_cell)
 	# TODO: Check for matches.
+	$Grid.gems[selected_cell.y][selected_cell.x].set_highlight(false)
 	selected_cell = Vector2i(-1, -1)
 	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
