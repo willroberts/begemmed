@@ -39,6 +39,8 @@ func find_horizontal_matches(grid_contents: Array) -> Array:
 		var count := 1
 		# Avoid array bounds issues by starting from 1.
 		for x in range(1, GRID_SIZE):
+			#if not grid_contents[y] or not grid_contents[y][x]: continue
+			#if not grid_contents[y] or not grid_contents[y][x-1]: continue
 			if grid_contents[y][x].get_color() == grid_contents[y][x-1].get_color():
 				count += 1
 				continue
@@ -57,6 +59,8 @@ func find_vertical_matches(grid_contents: Array) -> Array:
 		var count := 1
 		# Avoid array bounds issues by starting from 1.
 		for y in range(1, GRID_SIZE):
+			#if not grid_contents[y] or not grid_contents[y][x]: continue
+			#if not grid_contents[y-1] or not grid_contents[y-1][x]: continue
 			if grid_contents[y][x].get_color() == grid_contents[y-1][x].get_color():
 				count += 1
 				continue
@@ -73,10 +77,18 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 	''' Swaps the position of two gems. Finds all resulting matches and deletes matching gems. Makes gems
 	fall to fill empty spaces, generating new gems as needed.
 	'''
+	#if not grid_contents[first.y][first.x] or not grid_contents[second.y][second.x]:
+	#	print('attempted to swap null references; bailing')
+	#	return
 	swap_nodes(grid_contents, first, second)
 	grid_contents[first.y][first.x].set_highlight(false)
 	grid_contents[second.y][second.x].set_highlight(false)
 	var matches = find_matches(gem_nodes)
+	# Delete matches.
+	for m in matches:
+		grid_contents[m.y][m.x].queue_free()
+	# Make existing gems fall.
+	# Create new gems.
 
 func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: Vector2i) -> bool:
 	var copy = deep_copy_colors(grid_contents)
@@ -121,6 +133,13 @@ func find_color_matches(grid_contents: Array) -> Array:
 	return matches
 
 func swap_nodes(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
+	#if first.x < 0 || first.y < 0 || second.x < 0 || second.y < 0:
+	#	push_error('cannot swap nodes with negative indices')
+	#	return
+	#if first.y > len(grid_contents)-1 || second.y > len(grid_contents)-1:
+	#	return
+	#if first.x > len(grid_contents[first.y]-1) || second.x > len(grid_contents[second.y]-1):
+	#	return
 	var tmp = grid_contents[first.y][first.x]
 	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
 	grid_contents[second.y][second.x] = tmp
