@@ -53,9 +53,13 @@ func _input(event: InputEvent) -> void:
 	# Disallow swaps which would not result in a new match.
 	if $Grid.swap_would_result_in_match($Grid.gem_nodes, clicked_cell, selected_cell):
 		print('Swap would result in match.')
-		$Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
+		print(selected_cell, $Grid.gem_nodes[selected_cell.y][selected_cell.x].get_color())
+		print(clicked_cell, $Grid.gem_nodes[clicked_cell.y][clicked_cell.x].get_color())
+		#$Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
 	else:
 		print('Swap would not result in match.')
+		print(selected_cell, $Grid.gem_nodes[selected_cell.y][selected_cell.x].get_color())
+		print(clicked_cell, $Grid.gem_nodes[clicked_cell.y][clicked_cell.x].get_color())
 	reset_selection()
 
 func reset_selection():

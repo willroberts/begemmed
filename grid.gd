@@ -71,12 +71,17 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 	''' Swaps the position of two gems. Finds all resulting matches and deletes matching gems. Makes gems
 	fall to fill empty spaces, generating new gems as needed.
 	'''
-	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
+	swap(grid_contents, first, second)
 
 func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: Vector2i) -> bool:
 	# FIXME: deep copy may not be working; grid reports matches when it shouldn't.
 	# Repro: Make a non-matching move. Then a matching move. Then the same non-matching move.
 	#        The non-matching move will then be reported as matching.
 	var copy = grid_contents.duplicate(true)
-	copy[first.y][first.x] = copy[second.y][second.x]
+	swap(copy, first, second)
 	return len(find_matches(copy)) > 0
+
+func swap(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
+	var tmp = grid_contents[first.y][first.x]
+	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
+	grid_contents[second.y][second.x] = tmp
