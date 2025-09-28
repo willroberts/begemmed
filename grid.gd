@@ -74,10 +74,7 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 	swap(grid_contents, first, second)
 
 func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: Vector2i) -> bool:
-	# FIXME: deep copy may not be working; grid reports matches when it shouldn't.
-	# Repro: Make a non-matching move. Then a matching move. Then the same non-matching move.
-	#        The non-matching move will then be reported as matching.
-	var copy = grid_contents.duplicate(true)
+	var copy = deep_copy(grid_contents)
 	swap(copy, first, second)
 	return len(find_matches(copy)) > 0
 
@@ -85,3 +82,18 @@ func swap(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
 	var tmp = grid_contents[first.y][first.x]
 	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
 	grid_contents[second.y][second.x] = tmp
+
+func deep_copy(grid_contents: Array) -> Array:
+	''' Since Array.duplicate(true) deep copies references of contained objects, it is not
+	suitable for validating swaps without performing them. Instead, instantiate new objects
+	without adding anything to the scene.
+	'''
+	var result = []
+	for y in range(0, GRID_SIZE):
+		var row = []
+		for x in range(0, GRID_SIZE):
+			var g = GemClass.instantiate()
+			g.set_color(grid_contents[y][x].get_color())
+			row.append(g)
+		result.append(row)
+	return result
