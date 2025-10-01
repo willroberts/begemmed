@@ -8,10 +8,8 @@ var selected_cell := Vector2i(-1, -1)
 
 '''
 TODO:
-- Delete the matches and make gems "fall" into place.
 - Add the number of deleted gems to the score.
 - Display the score on the screen.
-- Add animations.
 '''
 
 func _ready() -> void:
@@ -54,7 +52,8 @@ func _input(event: InputEvent) -> void:
 		print('Swap would not result in match.')
 		reset_selection()
 		return
-	$Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
+	var points = await $Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
+	score += points
 	reset_selection()
 
 func reset_selection() -> void:

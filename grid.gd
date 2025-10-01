@@ -39,8 +39,8 @@ func find_horizontal_matches(grid_contents: Array) -> Array:
 		var count := 1
 		# Avoid array bounds issues by starting from 1.
 		for x in range(1, GRID_SIZE):
-			#if not grid_contents[y] or not grid_contents[y][x]: continue
-			#if not grid_contents[y] or not grid_contents[y][x-1]: continue
+			if grid_contents[y][x] == null or grid_contents[y][x-1] == null:
+				continue
 			if grid_contents[y][x].get_color() == grid_contents[y][x-1].get_color():
 				count += 1
 				continue
@@ -59,8 +59,8 @@ func find_vertical_matches(grid_contents: Array) -> Array:
 		var count := 1
 		# Avoid array bounds issues by starting from 1.
 		for y in range(1, GRID_SIZE):
-			#if not grid_contents[y] or not grid_contents[y][x]: continue
-			#if not grid_contents[y-1] or not grid_contents[y-1][x]: continue
+			if grid_contents[y][x] == null or grid_contents[y-1][x] == null:
+				continue
 			if grid_contents[y][x].get_color() == grid_contents[y-1][x].get_color():
 				count += 1
 				continue
@@ -73,7 +73,7 @@ func find_vertical_matches(grid_contents: Array) -> Array:
 				if k >= 0: matches.append(Vector2i(x, k))
 	return matches
 
-func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
+func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second: Vector2i) -> int:
 	''' Swaps the position of two gems. Finds all resulting matches and deletes matching gems. Makes gems
 	fall to fill empty spaces, generating new gems as needed.
 	'''
@@ -92,6 +92,8 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 		apply_gravity(grid_contents)
 		fill_empty_spaces(grid_contents)
 		await get_tree().create_timer(0.3).timeout
+
+	return 0 # TODO: Replace with score.
 
 func animate_gem_destruction(grid_contents: Array, matches: Array) -> void:
 	''' Animates gems being destroyed by applying an upward impulse and simulating gravity.
