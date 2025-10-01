@@ -85,15 +85,17 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 	grid_contents[second.y][second.x].set_highlight(false)
 
 	# Process until no further matches exist:
+	var total_deleted: int = 0
 	while true:
 		var matches = find_matches(grid_contents)
 		if len(matches) == 0: break
+		total_deleted += len(matches)
 		await animate_gem_destruction(grid_contents, matches)
 		apply_gravity(grid_contents)
 		fill_empty_spaces(grid_contents)
 		await get_tree().create_timer(0.3).timeout
 
-	return 0 # TODO: Replace with score.
+	return total_deleted
 
 func animate_gem_destruction(grid_contents: Array, matches: Array) -> void:
 	''' Animates gems being destroyed by applying an upward impulse and simulating gravity.

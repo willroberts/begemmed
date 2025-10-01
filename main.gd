@@ -2,15 +2,10 @@ extends Node
 
 @onready var GRID_SIZE: int = $Grid.GRID_SIZE
 @onready var GEM_SIZE: int = $Grid.GEM_SIZE
+@onready var score_label = $ScoreLabel
 
 var score := 0
 var selected_cell := Vector2i(-1, -1)
-
-'''
-TODO:
-- Add the number of deleted gems to the score.
-- Display the score on the screen.
-'''
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color.STEEL_BLUE)
@@ -54,6 +49,7 @@ func _input(event: InputEvent) -> void:
 		return
 	var points = await $Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
 	score += points
+	$ScoreLabel.text = "Score: %d" % score
 	reset_selection()
 
 func reset_selection() -> void:

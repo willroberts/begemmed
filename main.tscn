@@ -7,3 +7,9 @@
 script = ExtResource("1_ig7tw")
 
 [node name="Grid" parent="." instance=ExtResource("2_0xm2m")]
+
+[node name="ScoreLabel" type="Label" parent="."]
+offset_right = 410.0
+offset_bottom = 78.0
+theme_override_font_sizes/font_size = 48
+text = "Score: 0"
