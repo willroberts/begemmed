@@ -59,5 +59,6 @@ func _input(event: InputEvent) -> void:
 
 func reset_selection() -> void:
 	if selected_cell == Vector2i(-1, -1): return
-	$Grid.gem_nodes[selected_cell.y][selected_cell.x].set_highlight(false)
+	if $Grid.gem_nodes[selected_cell.y][selected_cell.x]:
+		$Grid.gem_nodes[selected_cell.y][selected_cell.x].set_highlight(false)
 	selected_cell = Vector2i(-1, -1)

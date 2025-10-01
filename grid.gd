@@ -83,12 +83,73 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 	swap_nodes(grid_contents, first, second)
 	grid_contents[first.y][first.x].set_highlight(false)
 	grid_contents[second.y][second.x].set_highlight(false)
-	var matches = find_matches(gem_nodes)
-	# Delete matches.
+
+	# Process until no further matches exist:
+	while true:
+		var matches = find_matches(grid_contents)
+		if len(matches) == 0: break
+		await animate_gem_destruction(grid_contents, matches)
+		apply_gravity(grid_contents)
+		fill_empty_spaces(grid_contents)
+		await get_tree().create_timer(0.3).timeout
+
+func animate_gem_destruction(grid_contents: Array, matches: Array) -> void:
+	''' Animates gems being destroyed by applying an upward impulse and simulating gravity.
+	'''
+	var animation_duration = 0.5  # Seconds.
+	var initial_velocity = -400.0
+	var gravity = 1200.0
+	var animating_gems = []
+
 	for m in matches:
-		grid_contents[m.y][m.x].queue_free()
-	# Make existing gems fall.
-	# Create new gems.
+		if grid_contents[m.y][m.x]:
+			var gem = grid_contents[m.y][m.x]
+			animating_gems.append({
+				"gem": gem,
+				"start_pos": gem.position,
+				"velocity": initial_velocity,
+				"time": 0.0
+			})
+			grid_contents[m.y][m.x] = null
+
+	var elapsed = 0.0
+	const DELTA_TIME = 0.016  # Targeting 60 FPS
+	while elapsed < animation_duration:
+		for gem_data in animating_gems:
+			gem_data["time"] += DELTA_TIME
+			gem_data["velocity"] += gravity * DELTA_TIME
+			var new_y = gem_data["gem"].position.y + gem_data["velocity"] * DELTA_TIME
+			gem_data["gem"].position.y = new_y
+			gem_data["gem"].modulate.a = 1.0 - (elapsed / animation_duration) # Fade out. # Fade out
+		elapsed += DELTA_TIME
+		await get_tree().create_timer(DELTA_TIME).timeout
+	for gem_data in animating_gems:
+		gem_data["gem"].queue_free()
+
+func apply_gravity(grid_contents: Array) -> void:
+	''' Make existing gems fall when empty space exists beneath them.
+	'''
+	for x in range(0, GRID_SIZE):
+		var pos = GRID_SIZE - 1
+		for y in range(GRID_SIZE-1, -1, -1):
+			if grid_contents[y][x] != null:
+				if y != pos:
+					# Move the gem down a space.
+					grid_contents[pos][x] = grid_contents[y][x]
+					grid_contents[y][x] = null
+					grid_contents[pos][x].position = Vector2(x*GEM_SIZE, pos*GEM_SIZE)
+				pos -= 1
+
+func fill_empty_spaces(grid_contents: Array) -> void:
+	''' Generate new gems to fill any resulting gaps after explosions.
+	'''
+	for y in range(0, GRID_SIZE):
+		for x in range(0, GRID_SIZE):
+			if grid_contents[y][x] == null:
+				var g = GemClass.instantiate()
+				g.position = Vector2(x*GEM_SIZE, y*GEM_SIZE)
+				add_child(g)
+				grid_contents[y][x] = g
 
 func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: Vector2i) -> bool:
 	var copy = deep_copy_colors(grid_contents)
@@ -133,16 +194,10 @@ func find_color_matches(grid_contents: Array) -> Array:
 	return matches
 
 func swap_nodes(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
-	#if first.x < 0 || first.y < 0 || second.x < 0 || second.y < 0:
-	#	push_error('cannot swap nodes with negative indices')
-	#	return
-	#if first.y > len(grid_contents)-1 || second.y > len(grid_contents)-1:
-	#	return
-	#if first.x > len(grid_contents[first.y]-1) || second.x > len(grid_contents[second.y]-1):
-	#	return
 	var tmp = grid_contents[first.y][first.x]
 	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
 	grid_contents[second.y][second.x] = tmp
+
 	grid_contents[first.y][first.x].position = Vector2(first.x*GEM_SIZE, first.y*GEM_SIZE)
 	grid_contents[second.y][second.x].position = Vector2(second.x*GEM_SIZE, second.y*GEM_SIZE)
 
@@ -154,6 +209,9 @@ func deep_copy_colors(grid_contents: Array) -> Array:
 	for y in range(0, GRID_SIZE):
 		var row = []
 		for x in range(0, GRID_SIZE):
-			row.append(grid_contents[y][x].get_color())
+			if grid_contents[y][x]:
+				row.append(grid_contents[y][x].get_color())
+			else:
+				row.append('')
 		result.append(row)
 	return result
