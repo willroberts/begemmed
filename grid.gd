@@ -39,8 +39,7 @@ func find_horizontal_matches(grid_contents: Array) -> Array:
 		var count := 1
 		# Avoid array bounds issues by starting from 1.
 		for x in range(1, GRID_SIZE):
-			if grid_contents[y][x] == null or grid_contents[y][x-1] == null:
-				continue
+			if grid_contents[y][x] == null or grid_contents[y][x-1] == null: continue
 			if grid_contents[y][x].get_color() == grid_contents[y][x-1].get_color():
 				count += 1
 				continue
@@ -59,8 +58,7 @@ func find_vertical_matches(grid_contents: Array) -> Array:
 		var count := 1
 		# Avoid array bounds issues by starting from 1.
 		for y in range(1, GRID_SIZE):
-			if grid_contents[y][x] == null or grid_contents[y-1][x] == null:
-				continue
+			if grid_contents[y][x] == null or grid_contents[y-1][x] == null: continue
 			if grid_contents[y][x].get_color() == grid_contents[y-1][x].get_color():
 				count += 1
 				continue

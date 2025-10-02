@@ -6,18 +6,19 @@ extends Node
 
 var score := 0
 var selected_cell := Vector2i(-1, -1)
+var processing_move := false
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color.STEEL_BLUE)
 
 func _input(event: InputEvent) -> void:
+	# Prevent inputs during processing.
+	if processing_move: return
+
 	# Ignore unsupported input.
-	if event is not InputEventMouseButton:
-		return
-	if not event.pressed:
-		return
-	if event.button_index != MOUSE_BUTTON_LEFT:
-		return
+	if event is not InputEventMouseButton: return
+	if not event.pressed: return
+	if event.button_index != MOUSE_BUTTON_LEFT: return
 
 	# Capture and validate click.
 	var click_pos: Vector2 = event.position
@@ -48,10 +49,14 @@ func _input(event: InputEvent) -> void:
 		print('Swap would not result in match.')
 		reset_selection()
 		return
-	var points = await $Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked_cell, selected_cell)
-	score += points
+	process_swap(clicked_cell, selected_cell)
+
+func process_swap(clicked: Vector2i, selected: Vector2i) -> void:
+	processing_move = true
+	score += await $Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked, selected)
 	$ScoreLabel.text = "Score: %d" % score
 	reset_selection()
+	processing_move = false
 
 func reset_selection() -> void:
 	if selected_cell == Vector2i(-1, -1): return
