@@ -29,6 +29,7 @@ func _input(event: InputEvent) -> void:
 
 	# Clicking an already-selected cell does nothing.
 	if clicked_cell == selected_cell:
+		reset_selection()
 		return
 
 	# This is the first click; save the position and return.
