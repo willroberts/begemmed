@@ -9,9 +9,13 @@ var selected_cell := Vector2i(-1, -1)
 var processing_move := false
 
 func _ready() -> void:
+	''' Set the window background to blue on initialization.
+	'''
 	RenderingServer.set_default_clear_color(Color.STEEL_BLUE)
 
 func _input(event: InputEvent) -> void:
+	''' Handle mouse events, calling process_swap() when a move is confirmed.
+	'''
 	# Prevent inputs during processing.
 	if processing_move: return
 
@@ -52,6 +56,8 @@ func _input(event: InputEvent) -> void:
 	process_swap(clicked_cell, selected_cell)
 
 func process_swap(clicked: Vector2i, selected: Vector2i) -> void:
+	''' Lock input while processing matches and replacing gems. Increments score.
+	'''
 	processing_move = true
 	score += await $Grid.swap_gems_and_explode_matches($Grid.gem_nodes, clicked, selected)
 	$ScoreLabel.text = "Score: %d" % score
@@ -59,6 +65,8 @@ func process_swap(clicked: Vector2i, selected: Vector2i) -> void:
 	processing_move = false
 
 func reset_selection() -> void:
+	''' When a gem is deselected or moved, disable highlighting.
+	'''
 	if selected_cell == Vector2i(-1, -1): return
 	if $Grid.gem_nodes[selected_cell.y][selected_cell.x]:
 		$Grid.gem_nodes[selected_cell.y][selected_cell.x].set_highlight(false)

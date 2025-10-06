@@ -2,7 +2,7 @@ extends Node2D
 
 var GemClass = preload("res://gem.tscn")
 
-var GRID_SIZE: int = 8
+var GRID_SIZE: int = 8 # width and height
 var GEM_SIZE: int = 144 # pixels
 var gem_nodes: Array = [] # [][]Gem
 
@@ -31,9 +31,13 @@ func _ready() -> void:
 			gem_nodes[m.y][m.x].set_color(Gem.random_color())
 
 func find_matches(grid_contents: Array) -> Array:
+	''' Convenience method for find both horizontal and vertical matches.
+	'''
 	return find_horizontal_matches(grid_contents) + find_vertical_matches(grid_contents)
 
 func find_horizontal_matches(grid_contents: Array) -> Array:
+	''' Returns the indices of matching sets of three or more nodes in each row.
+	'''
 	var matches = []
 	for y in range(0, GRID_SIZE):
 		var count := 1
@@ -53,6 +57,8 @@ func find_horizontal_matches(grid_contents: Array) -> Array:
 	return matches
 
 func find_vertical_matches(grid_contents: Array) -> Array:
+	''' Returns the indices of matching sets of three or more nodes in each column.
+	'''
 	var matches = []
 	for x in range(0, GRID_SIZE):
 		var count := 1
@@ -75,9 +81,6 @@ func swap_gems_and_explode_matches(grid_contents: Array, first: Vector2i, second
 	''' Swaps the position of two gems. Finds all resulting matches and deletes matching gems. Makes gems
 	fall to fill empty spaces, generating new gems as needed.
 	'''
-	#if not grid_contents[first.y][first.x] or not grid_contents[second.y][second.x]:
-	#	print('attempted to swap null references; bailing')
-	#	return
 	swap_nodes(grid_contents, first, second)
 	grid_contents[first.y][first.x].set_highlight(false)
 	grid_contents[second.y][second.x].set_highlight(false)
@@ -122,7 +125,7 @@ func animate_gem_destruction(grid_contents: Array, matches: Array) -> void:
 			gem_data["velocity"] += gravity * DELTA_TIME
 			var new_y = gem_data["gem"].position.y + gem_data["velocity"] * DELTA_TIME
 			gem_data["gem"].position.y = new_y
-			gem_data["gem"].modulate.a = 1.0 - (elapsed / animation_duration) # Fade out. # Fade out
+			gem_data["gem"].modulate.a = 1.0 - (elapsed / animation_duration) # Fade out.
 		elapsed += DELTA_TIME
 		await get_tree().create_timer(DELTA_TIME).timeout
 	for gem_data in animating_gems:
@@ -154,6 +157,9 @@ func fill_empty_spaces(grid_contents: Array) -> void:
 				grid_contents[y][x] = g
 
 func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: Vector2i) -> bool:
+	''' Returns true when swapping the given nodes would result in new matches in the grid.
+	Deep copies the given grid_contents to avoid accidental modification.
+	'''
 	var copy = deep_copy_colors(grid_contents)
 	var tmp = copy[first.y][first.x]
 	copy[first.y][first.x] = copy[second.y][second.x]
@@ -161,6 +167,9 @@ func swap_would_result_in_match(grid_contents: Array, first: Vector2i, second: V
 	return len(find_color_matches(copy)) > 0
 
 func find_color_matches(grid_contents: Array) -> Array:
+	''' Given a grid of color strings, return the indices of matching gems.
+	Used in place of find_matches() to avoid copying references, improving performance.
+	'''
 	var matches = []
 
 	# Horizontal matches
@@ -196,6 +205,8 @@ func find_color_matches(grid_contents: Array) -> Array:
 	return matches
 
 func swap_nodes(grid_contents: Array, first: Vector2i, second: Vector2i) -> void:
+	''' Exchanges the colors of two gems in the given grid.
+	'''
 	var tmp = grid_contents[first.y][first.x]
 	grid_contents[first.y][first.x] = grid_contents[second.y][second.x]
 	grid_contents[second.y][second.x] = tmp
